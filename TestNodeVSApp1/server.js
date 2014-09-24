@@ -15,17 +15,15 @@ fs.exists(filePath, function(exists) {
 
 http.createServer(function (request, response) {
     var body = "";
+    response.writeHead(200, { "Content-Type": "text/plain" });
     request.on('data', function (chunk) {
         body += chunk;
     });
     request.on('end', function () {
-        console.log('POSTed: ' + body);
-        fs.appendFile(filePath, body, 'a+', function (err) {
-            console.log(err);
+        response.write(request.method+'ed: ' + body);
+        response.end();
+        fs.appendFile(filePath, request.method + 'ed: ' + body+'\n', { encoding: 'utf-8', mode: 438, flag: 'a+' }, function(err) {
+            if (err) console.log(err);
         });
     });
-    
-    response.writeHead(200, { "Content-Type": "text/plain" });
-    //response.Write("Hello Folks");
-    response.end();
 }).listen(8888);
